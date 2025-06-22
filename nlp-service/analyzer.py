@@ -48,7 +48,7 @@ def analyze_text(raw_text: str) -> dict:
     verifiability = zero_shot_analysis(
         cleaned,
         labels=VERIFY_LABELS,
-        model_name="microsoft/deberta-v3-base-mnli",
+        model_name="MoritzLaurer/deberta-v3-base-zeroshot-v2.0",
         hypothesis_template="La afirmación es {}."
     )
     logging.info(f"Verifiability analysis result: {verifiability}")
