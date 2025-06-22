@@ -1,11 +1,10 @@
 import spacy
 import re
+from consts import EXTRA_STOPWORDS
+
 
 nlp = spacy.load("es_core_news_sm")
 
-EXTRA_STOPWORDS = {"esto", "eso", "así", "también", "muy", "entonces", "además", "quizás", "igual", "incluso", "solo",
-                   "pues", "claro", "bueno", "ok", "vale", "aunque", "ciertamente", "obviamente", "seguro", "sí", "no",
-                   "jamás", "siempre", "nunca", "ya", "todavía", "casi", "realmente", "simplemente", "definitivamente"}
 
 def preprocess_text(text: str, remove_stopwords: bool = True) -> str:
     """
@@ -14,17 +13,22 @@ def preprocess_text(text: str, remove_stopwords: bool = True) -> str:
     :param remove_stopwords: Booleano que indica si se deben eliminar las stopwords.
     :return: Texto preprocesado como una cadena.
     """
+
+    # limpiamos el texto de urls y caracteres especiales
     text = re.sub(r"http\S+|www\S+", "", text)           # URLs
     text = re.sub(r"[^\w\sáéíóúüñÁÉÍÓÚÜÑ.,!?]", "", text) # símbolos raros
     text = text.lower().strip()
 
+    # procesamos el texto con spaCy, lo dejamos preparado para aplicar lematización y stopwords
     doc = nlp(text)
 
     tokens = []
-    for token in doc:
+    for token in doc: # recorremos los tokens del documento
         if remove_stopwords and (token.is_stop or token.text in EXTRA_STOPWORDS):
+            # eliminamos stopwords y extra stopwords (si corresponde)
             continue
         if token.is_punct:
+            # si es un signo de puntuación, lo eliminamos
             continue
         tokens.append(token.lemma_)
 
